@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /** ********************************************************************************************
  *                                                                                             *
  * Please read the following tutorial before implementing tasks:                               *
@@ -252,8 +253,24 @@ function getQuarter(date) {
  * { start: '01-01-2024', end: '15-01-2024' }, 1, 3 => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
-function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
-  throw new Error('Not implemented');
+function getWorkSchedule(per, work, off) {
+  const [sd, sm, sy] = per.start.split('-');
+  const [ed, em, ey] = per.end.split('-');
+  const date = new Date(+sy, +sm - 1, +sd + 1);
+  let currentDate = date;
+  const endDate = new Date(+ey, +em - 1, +ed + 1);
+  const res = [];
+  for (let i = date.getDate(); currentDate <= endDate; ) {
+    for (let j = 0; j < work; j += 1, i += 1) {
+      currentDate = new Date(date.getFullYear(), date.getMonth(), i);
+      const [y, m, d] = currentDate.toISOString().split('-');
+      if (currentDate <= endDate) res.push(`${d.slice(0, 2)}-${m}-${y}`);
+      if (currentDate > endDate) return res;
+    }
+    i += off;
+    if (new Date(date.getFullYear(), date.getMonth(), i) > endDate) return res;
+  }
+  return res;
 }
 
 /**
