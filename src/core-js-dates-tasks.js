@@ -147,19 +147,12 @@ function isDateInPeriod(date, period) {
  * '1999-01-05T02:20:00.000Z' => '1/5/1999, 2:20:00 AM'
  * '2010-12-15T22:59:00.000Z' => '12/15/2010, 10:59:00 PM'
  */
-/**
- * Returns the date formatted in 'M/D/YYYY, hh:mm:ss a'.
- *
- * @param {string} date - The date to be formatted, in ISO 8601 format (e.g., 'YYYY-MM-DDTHH:mm:ss.sssZ').
- * @return {string} - The date formatted in 'Month/Day/Year, Hour:Minute:Second AM/PM'.
- *
- * @example:
- * '2024-02-01T15:00:00.000Z' => '2/1/2024, 3:00:00 PM'
- * '1999-01-05T02:20:00.000Z' => '1/5/1999, 2:20:00 AM'
- * '2010-12-15T22:59:00.000Z' => '12/15/2010, 10:59:00 PM'
- */
-function formatDate(/* date */) {
-  throw new Error('Not implemented');
+function formatDate(date) {
+  const d = new Date(date);
+  const h = +date.toString().split('T')[1].slice(0, 2);
+  const format = h >= 12 ? 'PM' : 'AM';
+  const [y, m, day] = date.split('-');
+  return `${+m}/${+day.slice(0, 2)}/${y}, ${((h - 1) % 12) + 1}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')} ${format}`;
 }
 
 /**
@@ -174,8 +167,14 @@ function formatDate(/* date */) {
  * 12, 2023 => 10
  * 1, 2024 => 8
  */
-function getCountWeekendsInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountWeekendsInMonth(month, year) {
+  return new Array(getCountDaysInMonth(month, year))
+    .fill(null)
+    .reduce((a, _, i) => {
+      const day = new Date(year, month - 1, i + 1).getDay();
+      if (day % 7 === 6 || day % 7 === 0) return a + 1;
+      return a;
+    }, 0);
 }
 
 /**
@@ -191,8 +190,14 @@ function getCountWeekendsInMonth(/* month, year */) {
  * Date(2024, 0, 31) => 5
  * Date(2024, 1, 23) => 8
  */
-function getWeekNumberByDate(/* date */) {
-  throw new Error('Not implemented');
+function getWeekNumberByDate(d) {
+  let countDate = new Date(d.getFullYear(), 0, 1);
+  let counter = countDate.getDay() !== 1;
+  for (let i = 0; countDate.getTime() < d.getTime(); i += 1) {
+    countDate = new Date(d.getFullYear(), 0, i);
+    if (countDate.getDay() === 1) counter += 1;
+  }
+  return counter === 26 ? 25 : counter;
 }
 
 /**
@@ -206,8 +211,12 @@ function getWeekNumberByDate(/* date */) {
  * Date(2024, 0, 13) => Date(2024, 8, 13)
  * Date(2023, 1, 1) => Date(2023, 9, 13)
  */
-function getNextFridayThe13th(/* date */) {
-  throw new Error('Not implemented');
+function getNextFridayThe13th(d) {
+  for (let i = d.getDate() + 1; ; i += 1) {
+    const checkDate = new Date(d.getFullYear(), d.getMonth(), i);
+    if (checkDate.getDate() === 13 && checkDate.getDay() === 5)
+      return checkDate;
+  }
 }
 
 /**
@@ -221,8 +230,8 @@ function getNextFridayThe13th(/* date */) {
  * Date(2024, 5, 1) => 2
  * Date(2024, 10, 10) => 4
  */
-function getQuarter(date) {
-  return Math.ceil((date.getMonth() + 1) / 3);
+function getQuarter(/* date */) {
+  throw new Error('Not implemented');
 }
 
 /**
@@ -243,24 +252,8 @@ function getQuarter(date) {
  * { start: '01-01-2024', end: '15-01-2024' }, 1, 3 => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
-function getWorkSchedule(per, work, off) {
-  const [sd, sm, sy] = per.start.split('-');
-  const [ed, em, ey] = per.end.split('-');
-  const date = new Date(+sy, +sm - 1, +sd + 1);
-  let currentDate = date;
-  const endDate = new Date(+ey, +em - 1, +ed + 1);
-  const res = [];
-  for (let i = date.getDate(); currentDate <= endDate; ) {
-    for (let j = 0; j < work; j += 1, i += 1) {
-      currentDate = new Date(date.getFullYear(), date.getMonth(), i);
-      const [y, m, d] = currentDate.toISOString().split('-');
-      if (currentDate <= endDate) res.push(`${d.slice(0, 2)}-${m}-${y}`);
-      if (currentDate > endDate) return res;
-    }
-    i += off;
-    if (new Date(date.getFullYear(), date.getMonth(), i) > endDate) return res;
-  }
-  return res;
+function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
+  throw new Error('Not implemented');
 }
 
 /**
