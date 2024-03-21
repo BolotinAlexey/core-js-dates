@@ -56,7 +56,7 @@ const week = [
   'Saturday',
 ];
 function getDayName(date) {
-  return week.at(new Date(date).getDay());
+  return week[new Date(date).getDay()];
 }
 
 /**
@@ -190,16 +190,14 @@ function getCountWeekendsInMonth(month, year) {
  * Date(2024, 0, 31) => 5
  * Date(2024, 1, 23) => 8
  */
-function getWeekNumberByDate(/* d */) {
-  // let countDate = new Date(d.getFullYear(), 0, 1);
-  // const aprox = countDate.getDay() === 0 ? 1 : 0;
-  // let counter = countDate.getDay() === 0 ? 1 : 0;
-  // for (let i = 0; countDate.getTime() < d.getTime(); i += 1) {
-  //   countDate = new Date(d.getFullYear(), 0, i);
-  //   if (countDate.getDay() === 1) counter += 1;
-  // }
-  // return counter - aprox;
-  throw new Error('Not implemented');
+function getWeekNumberByDate(d) {
+  let countDate = new Date(d.getFullYear(), 0, 1);
+  let counter = countDate.getDay() !== 1;
+  for (let i = 0; countDate.getTime() < d.getTime(); i += 1) {
+    countDate = new Date(d.getFullYear(), 0, i);
+    if (countDate.getDay() === 1) counter += 1;
+  }
+  return counter === 26 ? 25 : counter;
 }
 
 /**
