@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /** ********************************************************************************************
  *                                                                                             *
  * Please read the following tutorial before implementing tasks:                               *
